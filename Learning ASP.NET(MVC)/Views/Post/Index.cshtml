@@ -1,0 +1,124 @@
+@using Learning_ASP.NET_MVC_.Helper
+@model IEnumerable<Post>
+@{
+    ViewData["Title"] = "Explore Blog Posts";
+    var currentCategoryId = Context.Request.Query["categoryId"].ToString();
+}
+
+<!-- Category Filters -->
+<div class="mb-4">
+    <div class="category-filter-container">
+        <a asp-controller="Post" 
+           asp-action="Index" 
+           class="category-pill @(string.IsNullOrEmpty(currentCategoryId) ? "active" : "")">
+            <i class="bi bi-grid-fill me-1"></i> All Posts
+        </a>
+
+        @if (ViewBag.CategoryList != null)
+        {
+            foreach (var category in ViewBag.CategoryList)
+            {
+                var isActive = currentCategoryId == category.Id.ToString();
+                <a asp-controller="Post" 
+                   asp-action="Index" 
+                   asp-route-categoryId="@category.Id" 
+                   class="category-pill @(isActive ? "active" : "")">
+                    @category.Name
+                </a>
+            }
+        }
+    </div>
+</div>
+
+<!-- Admin Header Action -->
+@if (User.IsInRole("Admin"))
+{
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+        <div>
+            <h2 class="h4 fw-bold text-white mb-0">Latest Articles</h2>
+            <p class="text-white-50 small mb-0">Browse and manage published content</p>
+        </div>
+        <a class="btn btn-modern-success" asp-action="Create" asp-controller="Post">
+            <i class="bi bi-plus-lg"></i> Create New Post
+        </a>
+    </div>
+}
+
+<!-- Posts Grid -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+@if (Model != null && Model.Any())
+{
+    @foreach (var post in Model)
+    {
+        <div class="col">
+            <div class="modern-card">
+                <div class="card-img-wrapper">
+                    @if (!string.IsNullOrEmpty(post.FeaturedImage))
+                    {
+                        <img src="@post.FeaturedImage" class="card-img-modern" alt="@post.Title" loading="lazy" />
+                    }
+                    else
+                    {
+                        <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white-50">
+                            <i class="bi bi-image fs-1"></i>
+                        </div>
+                    }
+
+                    @if (post.Category != null)
+                    {
+                        <div class="card-badge-overlay">
+                            <span class="badge-glass-emerald">@post.Category.Name</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="modern-card-body">
+                    <div class="card-post-date">
+                        <i class="bi bi-calendar3"></i>
+                        <span>@post.PublishDate.ToString("MMM dd, yyyy")</span>
+                    </div>
+
+                    <h3 class="card-post-title">
+                        <a asp-action="Details" asp-controller="Post" asp-route-id="@post.Id">
+                            @post.Title
+                        </a>
+                    </h3>
+
+                    @{
+                        var content = RemoveHtmlTag.RemoveHtmlTags(post.Content ?? string.Empty);
+                    }
+                    <p class="card-post-excerpt">
+                        @(content.Length > 110 ? content.Substring(0, 110) + "..." : content)
+                    </p>
+                </div>
+
+                <div class="modern-card-footer">
+                    <div class="author-info">
+                        <span class="author-avatar-sm">
+                            @(string.IsNullOrWhiteSpace(post.Author) ? "A" : post.Author.Substring(0, 1).ToUpper())
+                        </span>
+                        <span class="text-truncate" style="max-width: 110px;">@post.Author</span>
+                    </div>
+
+                    <a class="btn btn-sm btn-modern-outline-success" asp-action="Details" asp-controller="Post" asp-route-id="@post.Id">
+                        Read More <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="col-12">
+        <div class="glass-panel text-center py-5 my-4">
+            <i class="bi bi-journal-x fs-1 text-white-50 mb-3 d-block"></i>
+            <h4 class="text-white fw-bold mb-2">No Posts Found</h4>
+            <p class="text-white-50 mb-3">There are no articles available in this category yet.</p>
+            <a asp-controller="Post" asp-action="Index" class="btn btn-sm btn-modern-primary">
+                <i class="bi bi-arrow-left"></i> View All Posts
+            </a>
+        </div>
+    </div>
+}
+</div>

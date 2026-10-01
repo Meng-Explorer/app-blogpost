@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <title>@ViewData["Title"] - Modern Blog</title>
+    <!-- Bootswatch Theme -->
+    <link rel="stylesheet" href="~/lib/bootswatch/bootstrap.min.css" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <!-- Site Modern Design System -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <header class="sticky-top">
+        <partial name="_Navbar" />
+    </header>
+
+    <div class="app-main flex-grow-1">
+        <div class="container-xl px-3 px-sm-4 py-3 py-md-4">
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <footer class="modern-footer">
+        <div class="container-xl px-3 px-sm-4 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 text-center text-sm-start">
+            <div>
+                &copy; @DateTime.Now.Year <span class="fw-bold text-white">Modern Blog</span> &bull; Developed by <span class="text-white fw-semibold">MengLang-Developer</span>
+            </div>
+            <div>
+                <a asp-area="" asp-controller="Home" asp-action="Privacy" class="d-inline-flex align-items-center gap-1">
+                    <i class="bi bi-shield-check"></i> Privacy Policy
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

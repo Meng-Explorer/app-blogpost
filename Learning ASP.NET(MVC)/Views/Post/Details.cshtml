@@ -1,0 +1,205 @@
+@model Post
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="content-wrapper max-w-post">
+    <!-- Top Action Bar -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 pb-3 border-bottom border-white border-opacity-10">
+        <a asp-action="Index" asp-controller="Post" class="btn btn-sm btn-modern-outline">
+            <i class="bi bi-arrow-left"></i> Back to Articles
+        </a>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="d-flex gap-2">
+                <a asp-action="Edit" asp-controller="Post" asp-route-id="@Model.Id" class="btn btn-sm btn-modern-primary">
+                    <i class="bi bi-pencil-square"></i> Edit
+                </a>
+                <a asp-action="Delete" asp-controller="Post" asp-route-id="@Model.Id" class="btn btn-sm btn-modern-danger">
+                    <i class="bi bi-trash3"></i> Delete
+                </a>
+            </div>
+        }
+    </div>
+
+    <!-- Article Header -->
+    <header class="post-detail-header">
+        <h1 class="post-detail-title">@Model.Title</h1>
+
+        <!-- Metadata Row -->
+        <div class="post-meta-bar">
+            <div class="meta-chip">
+                <i class="bi bi-person-circle text-info"></i>
+                <span>@Model.Author</span>
+            </div>
+            <div class="meta-chip">
+                <i class="bi bi-calendar3 text-warning"></i>
+                <span>@Model.PublishDate.ToString("MMMM dd, yyyy")</span>
+            </div>
+            @if (Model.Category != null)
+            {
+                <div class="meta-chip">
+                    <i class="bi bi-tag text-success"></i>
+                    <span>@Model.Category.Name</span>
+                </div>
+            }
+        </div>
+    </header>
+
+    <!-- Featured Image -->
+    @if (!string.IsNullOrEmpty(Model.FeaturedImage))
+    {
+        <img src="@Model.FeaturedImage" alt="@Model.Title" class="feature-image-detail" />
+    }
+
+    <!-- Post Body Content -->
+    <article class="post-article-content mb-5">
+        @Html.Raw(Model.Content)
+    </article>
+
+    <hr class="border-white border-opacity-20 my-5"/>
+
+    <!-- Comments Section -->
+    <section class="comments-area">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h3 class="h4 text-white fw-bold mb-0 d-flex align-items-center gap-2">
+                <i class="bi bi-chat-left-dots text-primary"></i>
+                <span>Comments</span>
+            </h3>
+            <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-3 py-2">
+                @(Model.Comments?.Count ?? 0)
+            </span>
+        </div>
+
+        <div class="comments-list mb-5" id="commentSections">
+            @if (Model.Comments != null && Model.Comments.Any())
+            {
+                @foreach (var comment in Model.Comments)
+                {
+                    <div class="comment-card">
+                        <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="author-avatar-sm" style="background: linear-gradient(135deg, #10b981, #06b6d4);">
+                                    @(string.IsNullOrWhiteSpace(comment.Username) ? "U" : comment.Username.Substring(0, 1).ToUpper())
+                                </div>
+                                <span class="fw-bold text-white">@comment.Username</span>
+                            </div>
+                            <span class="text-white-50 small">
+                                <i class="bi bi-clock me-1"></i>@comment.CommentDate.ToString("MMM dd, yyyy HH:mm")
+                            </span>
+                        </div>
+                        <p class="text-white-75 mb-0 ps-1" style="font-size: 0.95rem; line-height: 1.6;">
+                            @comment.Content
+                        </p>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="alert bg-white bg-opacity-10 text-white-50 text-center border-0 rounded-4 py-4" id="noCommentsMsg">
+                    <i class="bi bi-chat-square-text fs-2 d-block mb-2"></i>
+                    No comments yet. Be the first to share your thoughts!
+                </div>
+            }
+        </div>
+
+        <!-- Add Comment Form -->
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <div class="p-4 rounded-4" style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.1);">
+                <h4 class="h5 text-white fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-pencil-fill text-success"></i> Leave a Comment
+                </h4>
+                <form id="commentForm">
+                    <div class="mb-3">
+                        <label for="Username" class="form-label">Your Name</label>
+                        <input id="Username" name="Username" required class="form-control" value="@User.Identity.Name" placeholder="Enter your display name" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Content" class="form-label">Comment</label>
+                        <textarea id="Content" name="Content" rows="3" required class="form-control" placeholder="Share your perspective or feedback..."></textarea>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="submit" id="btnSubmitComment" class="btn btn-modern-success">
+                            <i class="bi bi-send-fill"></i> Post Comment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        }
+        else
+        {
+            <div class="text-center p-4 rounded-4" style="background: rgba(0, 0, 0, 0.2); border: 1px dashed rgba(255, 255, 255, 0.2);">
+                <p class="text-white-75 mb-3">Please sign in to join the conversation and leave a comment.</p>
+                <a asp-action="Login" asp-controller="Auth" class="btn btn-sm btn-modern-primary px-4">
+                    <i class="bi bi-box-arrow-in-right"></i> Sign In to Comment
+                </a>
+            </div>
+        }
+    </section>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            $("#commentForm").on("submit", function (event) {
+                event.preventDefault();
+                let username = $("#Username").val().trim();
+                let content = $("#Content").val().trim();
+                let postId = @Model.Id;
+
+                if (!username || !content) return;
+
+                let $btn = $("#btnSubmitComment");
+                $btn.prop('disabled', true);
+
+                $.ajax({
+                    url: '@Url.Action("AddComment", "Post")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        Username: username,
+                        Content: content,
+                        PostId: postId
+                    }),
+                    success: function (res) {
+                        $('#commentForm')[0].reset();
+                        $('#noCommentsMsg').remove();
+
+                        let userInitial = res.username ? res.username.charAt(0).toUpperCase() : 'U';
+                        let newCommentHtml = `
+                            <div class="comment-card">
+                                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="author-avatar-sm" style="background: linear-gradient(135deg, #10b981, #06b6d4);">
+                                            ${userInitial}
+                                        </div>
+                                        <span class="fw-bold text-white">${res.username}</span>
+                                    </div>
+                                    <span class="text-white-50 small">
+                                        <i class="bi bi-clock me-1"></i>${res.commentDate}
+                                    </span>
+                                </div>
+                                <p class="text-white-75 mb-0 ps-1" style="font-size: 0.95rem; line-height: 1.6;">
+                                    ${res.content}
+                                </p>
+                            </div>
+                        `;
+                        $('#commentSections').append(newCommentHtml);
+                    },
+                    error: function (err) {
+                        console.error("Error:", err);
+                        alert("Failed to add comment. Please try again.");
+                    },
+                    complete: function () {
+                        $btn.prop('disabled', false);
+                    }
+                });
+            });
+        });
+    </script>
+}

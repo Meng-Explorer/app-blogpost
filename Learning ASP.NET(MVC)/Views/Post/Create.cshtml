@@ -1,0 +1,77 @@
+@model PostViewModels
+@{
+    ViewData["Title"] = "Create New Article";
+}
+
+<div class="content-wrapper max-w-post">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 pb-3 border-bottom border-white border-opacity-10">
+        <div>
+            <h2 class="h3 fw-bold text-white mb-1">
+                <i class="bi bi-pencil-square text-success me-2"></i>Create New Post
+            </h2>
+            <p class="text-white-50 small mb-0">Publish a new article to your blog</p>
+        </div>
+        <a class="btn btn-sm btn-modern-outline" asp-action="Index" asp-controller="Post">
+            <i class="bi bi-arrow-left"></i> Back to Articles
+        </a>
+    </div>
+
+    <form asp-action="Create" asp-controller="Post" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="All" class="alert alert-danger bg-danger bg-opacity-25 border-danger text-white rounded-3 py-2 mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="PostData.Title" class="form-label">Article Title</label>
+            <input asp-for="PostData.Title" class="form-control" placeholder="Enter an engaging title..." />
+            <span asp-validation-for="PostData.Title" class="text-warning small"></span>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-12 col-md-6">
+                <label asp-for="PostData.CategoryId" class="form-label">Category</label>
+                <select asp-for="PostData.CategoryId" asp-items="Model.CategoryList" class="form-select">
+                    <option value="">-- Select Category --</option>
+                </select>
+                <span asp-validation-for="PostData.CategoryId" class="text-warning small"></span>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label asp-for="PostData.Author" class="form-label">Author Name</label>
+                <input asp-for="PostData.Author" class="form-control" placeholder="Your name or pen name" />
+                <span asp-validation-for="PostData.Author" class="text-warning small"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="PostData.Content" class="form-label">Article Content</label>
+            <textarea asp-for="PostData.Content" id="PostContent" class="form-control" rows="8"></textarea>
+            <span asp-validation-for="PostData.Content" class="text-warning small"></span>
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="ImageFiles" class="form-label">Featured Image</label>
+            <input asp-for="ImageFiles" class="form-control" type="file" accept="image/*" />
+            <small class="text-white-50 d-block mt-1">Recommended: High quality landscape image (16:9 ratio)</small>
+        </div>
+
+        <div class="d-flex flex-column flex-sm-row gap-2 pt-2">
+            <button type="submit" class="btn btn-modern-success px-4">
+                <i class="bi bi-cloud-arrow-up"></i> Publish Post
+            </button>
+            <a asp-action="Index" asp-controller="Post" class="btn btn-modern-outline">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.tiny.cloud/1/z3qdpk0szjj4fd4lpa133399jlh7n0exmbi20on8sn5r8u1i/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
+    <script>
+        tinymce.init({
+            selector: '#PostContent',
+            height: 380,
+            menubar: false,
+            plugins: 'lists link image table code help wordcount',
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+        });
+    </script>
+}

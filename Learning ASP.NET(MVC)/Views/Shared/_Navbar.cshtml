@@ -1,0 +1,77 @@
+<nav class="navbar navbar-expand-lg modern-navbar" data-bs-theme="dark">
+    <div class="container-xl px-2 px-sm-3">
+        <!-- Brand Logo -->
+        <a class="modern-brand" asp-controller="Post" asp-action="Index">
+            <span class="brand-icon-box">
+                <i class="bi bi-journal-richtext text-white fs-5"></i>
+            </span>
+            <span class="d-flex flex-column lh-1">
+                <span>Modern<span style="color: #818cf8;">Blog</span></span>
+            </span>
+        </a>
+
+        <!-- Mobile Hamburger Toggler -->
+        <button class="navbar-toggler border-0 shadow-none px-2 py-1" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Collapsible Content -->
+        <div class="collapse navbar-collapse" id="navbarColor01">
+            <ul class="navbar-nav me-auto ms-lg-3 mt-2 mt-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link nav-pill-modern active" asp-action="Index" asp-controller="Post">
+                        <i class="bi bi-house-door me-2"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+            </ul>
+
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <div class="mobile-nav-actions d-lg-flex align-items-center ms-lg-auto gap-2">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="Dashboard" asp-action="Dashboard" class="nav-pill-modern">
+                            <i class="bi bi-speedometer2 me-2 text-warning"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    }
+
+                    <!-- User Pill -->
+                    <div class="user-info-pill">
+                        <span class="avatar-badge">
+                            @(string.IsNullOrWhiteSpace(User.Identity.Name) ? "U" : User.Identity.Name.Substring(0, 1).ToUpper())
+                        </span>
+                        <div class="d-flex flex-column text-start lh-1 pe-2">
+                            <span class="fw-bold mb-1 text-white" style="font-size: 0.82rem;">
+                                @(User.IsInRole("Admin") ? "Admin" : "Member")
+                            </span>
+                            <span class="text-white-50 small text-truncate" style="max-width: 140px; font-size: 0.72rem;">
+                                @User.Identity.Name
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Logout Button -->
+                    <a asp-controller="Auth" asp-action="Logout" class="btn btn-sm btn-modern-danger">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="mobile-nav-actions d-lg-flex ms-lg-auto gap-2">
+                    <a asp-controller="Auth" asp-action="Login" class="btn btn-sm btn-modern-outline">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        <span>Login</span>
+                    </a>
+                    <a asp-controller="Auth" asp-action="Register" class="btn btn-sm btn-modern-success">
+                        <i class="bi bi-person-plus"></i>
+                        <span>Register</span>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</nav>

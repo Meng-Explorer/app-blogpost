@@ -1,0 +1,24 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="content-wrapper max-w-auth text-center py-5">
+    <div class="brand-icon-box mx-auto mb-4" style="width: 64px; height: 64px; background: linear-gradient(135deg, #ef4444, #dc2626);">
+        <i class="bi bi-exclamation-diamond-fill text-white fs-2"></i>
+    </div>
+    <h2 class="h3 fw-bold text-white mb-2">Something Went Wrong</h2>
+    <p class="text-white-50 mb-4">An error occurred while processing your request.</p>
+
+    @if (Model.ShowRequestId)
+    {
+        <div class="p-3 mb-4 rounded-3 text-start" style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.1);">
+            <span class="text-white-50 small">Request ID:</span>
+            <code class="text-warning d-block text-break mt-1">@Model.RequestId</code>
+        </div>
+    }
+
+    <a asp-controller="Post" asp-action="Index" class="btn btn-modern-primary px-4">
+        <i class="bi bi-house-door"></i> Return to Homepage
+    </a>
+</div>

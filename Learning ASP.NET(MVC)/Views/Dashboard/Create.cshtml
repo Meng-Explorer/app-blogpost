@@ -1,0 +1,65 @@
+@model ManageUserViewModels
+@{
+    ViewData["Title"] = "Create User";
+}
+
+<div class="glass-wrapper max-w-auth">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 pb-3 border-bottom border-white border-opacity-10">
+        <div>
+            <h2 class="h3 fw-bold text-white mb-1">
+                <i class="bi bi-person-plus text-success me-2"></i>Create User
+            </h2>
+            <p class="text-white-50 small mb-0">Register and assign a role to a new user</p>
+        </div>
+        <a asp-action="Dashboard" asp-controller="Dashboard" class="btn btn-sm btn-modern-outline">
+            <i class="bi bi-arrow-left"></i> Dashboard
+        </a>
+    </div>
+    
+    <form asp-action="Create" asp-controller="Dashboard" method="post">
+        <div asp-validation-summary="All" class="alert alert-danger bg-danger bg-opacity-25 border-danger text-white rounded-3 py-2 mb-3"></div>
+        
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label">Email Address</label>
+            <div class="input-group">
+                <span class="input-group-text bg-white bg-opacity-10 border-0 text-white-50">
+                    <i class="bi bi-envelope"></i>
+                </span>
+                <input asp-for="Email" class="form-control" placeholder="user@example.com" />
+            </div>
+            <span asp-validation-for="Email" class="text-warning small"></span>
+        </div>
+        
+        <div class="mb-3">
+            <label asp-for="Password" class="form-label">Temporary Password</label>
+            <div class="input-group">
+                <span class="input-group-text bg-white bg-opacity-10 border-0 text-white-50">
+                    <i class="bi bi-key"></i>
+                </span>
+                <input asp-for="Password" class="form-control" type="password" placeholder="Minimum 6 characters" />
+            </div>
+            <span asp-validation-for="Password" class="text-warning small"></span>
+        </div>
+        
+        <div class="mb-4">
+            <label asp-for="RoleId" class="form-label">Assign Role</label>
+            <div class="input-group">
+                <span class="input-group-text bg-white bg-opacity-10 border-0 text-white-50">
+                    <i class="bi bi-shield-lock"></i>
+                </span>
+                <select asp-for="RoleId" asp-items="@Model.RoleList" class="form-select">
+                    <option disabled selected value="">-- Select Role --</option>
+                </select>
+            </div>
+            <span asp-validation-for="RoleId" class="text-warning small"></span>
+        </div>
+        
+        <div class="d-flex flex-column flex-sm-row gap-2 pt-2">
+            <button type="submit" class="btn btn-modern-success px-4">
+                <i class="bi bi-check-lg"></i> Create Account
+            </button>
+            <a asp-action="Dashboard" asp-controller="Dashboard" class="btn btn-modern-outline px-4">Cancel</a>
+        </div>
+    </form>
+</div>
