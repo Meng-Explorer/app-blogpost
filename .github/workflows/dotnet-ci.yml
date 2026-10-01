@@ -1,0 +1,27 @@
+name: .NET Core CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Build & Validate
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore Dependencies
+      run: dotnet restore "Learning ASP.NET(MVC)/Learning ASP.NET(MVC).csproj"
+
+    - name: Build Project
+      run: dotnet build "Learning ASP.NET(MVC)/Learning ASP.NET(MVC).csproj" --configuration Release --no-restore
